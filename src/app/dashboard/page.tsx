@@ -21,7 +21,8 @@ const Page = async () => {
   return (
     <div>
       <p>{user.email}</p>
-      <UploadButton />
+      <UploadButton type="pdfUploader" />
+      <UploadButton type="videoUploader" />
     </div>
   );
 };

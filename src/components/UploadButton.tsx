@@ -11,15 +11,17 @@ import { useUploadThing } from "@/lib/uploadthing";
 import { useToast } from "./ui/use-toast";
 import { trpc } from "@/app/_trpc/client";
 import { useRouter } from "next/navigation";
-
-const UploadDropzone = () => {
+import axios from "axios";
+const UploadDropzone = ({ type }: { type: string }) => {
   const router = useRouter();
 
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const { toast } = useToast();
 
-  const { startUpload } = useUploadThing("pdfUploader");
+  const { startUpload } = useUploadThing(
+    type === "videoUploader" ? "videoUploader" : "pdfUploader"
+  );
 
   const { mutate: startPolling } = trpc.getFile.useMutation({
     onSuccess: (file) => {},
@@ -51,7 +53,6 @@ const UploadDropzone = () => {
 
         const progressInterval = startSimulatedProgress();
 
-        // handle file uploading
         const res = await startUpload(acceptedFile);
 
         if (!res) {
@@ -96,7 +97,9 @@ const UploadDropzone = () => {
                   <span className="font-semibold">Click to upload</span> or drag
                   and drop
                 </p>
-                <p className="text-xs text-zinc-500">PDF up to 16MB</p>
+                <p className="text-xs text-zinc-500">
+                  {type === "videoUploader" ? "Video" : "PDF"} up to 16MB
+                </p>
               </div>
 
               {acceptedFiles && acceptedFiles[0] ? (
@@ -142,7 +145,7 @@ const UploadDropzone = () => {
   );
 };
 
-const UploadButton = () => {
+const UploadButton = ({ type }: { type: string }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
@@ -155,11 +158,11 @@ const UploadButton = () => {
       }}
     >
       <DialogTrigger onClick={() => setIsOpen(true)} asChild>
-        <Button>Upload PDF</Button>
+        <Button>Upload {type === "videoUploader" ? "Video" : "PDF"}</Button>
       </DialogTrigger>
 
       <DialogContent>
-        <UploadDropzone />
+        <UploadDropzone type={type} />
       </DialogContent>
     </Dialog>
   );

@@ -5,7 +5,7 @@ import { db } from "@/db";
 import { z } from "zod";
 import { pc } from "@/lib/pinecone";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
-import { PineconeStore } from "langchain/vectorstores/pinecone";
+import { PineconeStore } from "@langchain/pinecone";
 
 export const appRouter = router({
   authCallback: publicProcedure

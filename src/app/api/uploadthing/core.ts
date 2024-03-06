@@ -4,8 +4,12 @@ import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 import { PDFLoader } from "langchain/document_loaders/fs/pdf";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
-import { PineconeStore } from "langchain/vectorstores/pinecone";
+import { PineconeStore } from "@langchain/pinecone";
 import { pc } from "@/lib/pinecone";
+import OpenAI from "openai";
+import fs from "fs";
+import { writeFile } from "fs/promises";
+import path from "path";
 
 const f = createUploadthing();
 
@@ -40,7 +44,6 @@ const onPdfUploadComplete = async ({
 
   try {
     const response = await fetch(file.url);
-    console.log(response);
 
     const blob = await response.blob();
 
@@ -79,7 +82,88 @@ const onPdfUploadComplete = async ({
   }
 };
 
-const onVideoUploadComplete = async () => {};
+const openai = new OpenAI({
+  organization: "org-mBG9JMy8iG34PUw6jvnL0BFY",
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+const onVideoUploadComplete = async ({
+  metadata,
+  file,
+}: {
+  metadata: Awaited<ReturnType<typeof middleware>>;
+  file: {
+    key: string;
+    name: string;
+    url: string;
+  };
+}) => {
+  const isFileExist = await db.file.findFirst({
+    where: {
+      key: file.key,
+    },
+  });
+
+  if (isFileExist) return;
+
+  const response = await fetch(file.url);
+  if (!response.ok)
+    throw new Error(`Failed to fetch video: ${response.statusText}`);
+  const arrayBuffer = await response.arrayBuffer();
+  const videoBuffer = Buffer.from(arrayBuffer);
+  const tempVideoPath = path.join(__dirname, "tempVideo.mp4");
+  await fs.promises.writeFile(tempVideoPath, videoBuffer);
+
+  const transcription = await openai.audio.transcriptions.create({
+    file: fs.createReadStream(tempVideoPath),
+    model: "whisper-1",
+  });
+
+  console.log(transcription.text);
+
+  const pineconeIndex = pc.Index("company");
+
+  const embeddings = new OpenAIEmbeddings({
+    openAIApiKey: process.env.OPENAI_API_KEY,
+  });
+
+  await PineconeStore.fromTexts([transcription.text], {}, embeddings, {
+    pineconeIndex,
+    namespace: metadata.userId,
+  });
+
+  const createdFile = await db.file.create({
+    data: {
+      key: file.key,
+      name: file.name,
+      userId: metadata.userId,
+      url: file.url,
+      uploadStatus: "PROCESSING",
+    },
+  });
+
+  try {
+    const response = await fetch(file.url);
+
+    await db.file.update({
+      data: {
+        uploadStatus: "SUCCESS",
+      },
+      where: {
+        id: createdFile.id,
+      },
+    });
+  } catch (error) {
+    await db.file.update({
+      data: {
+        uploadStatus: "FAILED",
+      },
+      where: {
+        id: createdFile.id,
+      },
+    });
+  }
+};
 
 const middleware = async () => {
   const { getUser } = getKindeServerSession();
