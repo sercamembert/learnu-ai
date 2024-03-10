@@ -121,8 +121,8 @@ const onVideoUploadComplete = async ({
     throw new Error(`Failed to fetch video: ${response.statusText}`);
   const arrayBuffer = await response.arrayBuffer();
   const videoBuffer = Buffer.from(arrayBuffer);
-  const tempVideoPath = path.join(__dirname, "tempVideo.mp4");
-  await fs.promises.writeFile(tempVideoPath, videoBuffer);
+  // const tempVideoPath = path.join(__dirname, "tempVideo.mp4");
+  // await fs.promises.writeFile(tempVideoPath, videoBuffer);
 
   const transcription = await openai.audio.transcriptions.create({
     file: await toFile(videoBuffer, file.name, { type: "audio/mp4" }),
