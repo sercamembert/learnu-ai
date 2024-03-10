@@ -6,7 +6,7 @@ import { PDFLoader } from "langchain/document_loaders/fs/pdf";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { PineconeStore } from "@langchain/pinecone";
 import { pc } from "@/lib/pinecone";
-import OpenAI from "openai";
+import OpenAI, { toFile } from "openai";
 import fs from "fs";
 import { writeFile } from "fs/promises";
 import path from "path";
@@ -115,33 +115,36 @@ const onVideoUploadComplete = async ({
       uploadStatus: "PROCESSING",
     },
   });
+
+  const response = await fetch(file.url);
+  if (!response.ok)
+    throw new Error(`Failed to fetch video: ${response.statusText}`);
+  const arrayBuffer = await response.arrayBuffer();
+  const videoBuffer = Buffer.from(arrayBuffer);
+  const tempVideoPath = path.join(__dirname, "tempVideo.mp4");
+  await fs.promises.writeFile(tempVideoPath, videoBuffer);
+
+  const transcription = await openai.audio.transcriptions.create({
+    file: await toFile(videoBuffer, file.name, { type: "audio/mp4" }),
+    model: "whisper-1",
+  });
+
+  console.log(transcription.text);
+
+  const pineconeIndex = pc.Index("company");
+
+  const embeddings = new OpenAIEmbeddings({
+    openAIApiKey: process.env.OPENAI_API_KEY,
+  });
+
+  const text = `tresc pliku o nazwie: ${file.name}` + transcription.text;
+
+  await PineconeStore.fromTexts([transcription.text], {}, embeddings, {
+    pineconeIndex,
+    namespace: metadata.userId,
+  });
+
   try {
-    const response = await fetch(file.url);
-    if (!response.ok)
-      throw new Error(`Failed to fetch video: ${response.statusText}`);
-    const arrayBuffer = await response.arrayBuffer();
-    const videoBuffer = Buffer.from(arrayBuffer);
-    const tempVideoPath = path.join(__dirname, "tempVideo.mp4");
-    await fs.promises.writeFile(tempVideoPath, videoBuffer);
-
-    const transcription = await openai.audio.transcriptions.create({
-      file: fs.createReadStream(tempVideoPath),
-      model: "whisper-1",
-    });
-
-    const pineconeIndex = pc.Index("company");
-
-    const embeddings = new OpenAIEmbeddings({
-      openAIApiKey: process.env.OPENAI_API_KEY,
-    });
-
-    const text = `tresc pliku o nazwie: ${file.name}` + transcription.text;
-
-    await PineconeStore.fromTexts([transcription.text], {}, embeddings, {
-      pineconeIndex,
-      namespace: metadata.userId,
-    });
-
     await db.file.update({
       data: {
         uploadStatus: "SUCCESS",
