@@ -1,9 +1,9 @@
 "use client";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import { trpc } from "../_trpc/client";
 
-const Page = () => {
+const PageContent = () => {
   const [companyDescription, setCompanyDescription] = useState<string>("");
   const router = useRouter();
 
@@ -34,6 +34,14 @@ const Page = () => {
       <button onClick={handlCreateUser}>Create user</button>
       {mutation.isPending ?? <div>Pending...</div>}
     </div>
+  );
+};
+
+const Page = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PageContent />
+    </Suspense>
   );
 };
 
