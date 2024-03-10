@@ -106,32 +106,6 @@ const onVideoUploadComplete = async ({
 
   if (isFileExist) return;
 
-  const response = await fetch(file.url);
-  if (!response.ok)
-    throw new Error(`Failed to fetch video: ${response.statusText}`);
-  const arrayBuffer = await response.arrayBuffer();
-  const videoBuffer = Buffer.from(arrayBuffer);
-  const tempVideoPath = path.join(__dirname, "tempVideo.mp4");
-  await fs.promises.writeFile(tempVideoPath, videoBuffer);
-
-  const transcription = await openai.audio.transcriptions.create({
-    file: fs.createReadStream(tempVideoPath),
-    model: "whisper-1",
-  });
-
-  const pineconeIndex = pc.Index("company");
-
-  const embeddings = new OpenAIEmbeddings({
-    openAIApiKey: process.env.OPENAI_API_KEY,
-  });
-
-  const text = `tresc pliku o nazwie: ${file.name}` + transcription.text;
-
-  await PineconeStore.fromTexts([transcription.text], {}, embeddings, {
-    pineconeIndex,
-    namespace: metadata.userId,
-  });
-
   const createdFile = await db.file.create({
     data: {
       key: file.key,
@@ -141,9 +115,32 @@ const onVideoUploadComplete = async ({
       uploadStatus: "PROCESSING",
     },
   });
-
   try {
     const response = await fetch(file.url);
+    if (!response.ok)
+      throw new Error(`Failed to fetch video: ${response.statusText}`);
+    const arrayBuffer = await response.arrayBuffer();
+    const videoBuffer = Buffer.from(arrayBuffer);
+    const tempVideoPath = path.join(__dirname, "tempVideo.mp4");
+    await fs.promises.writeFile(tempVideoPath, videoBuffer);
+
+    const transcription = await openai.audio.transcriptions.create({
+      file: fs.createReadStream(tempVideoPath),
+      model: "whisper-1",
+    });
+
+    const pineconeIndex = pc.Index("company");
+
+    const embeddings = new OpenAIEmbeddings({
+      openAIApiKey: process.env.OPENAI_API_KEY,
+    });
+
+    const text = `tresc pliku o nazwie: ${file.name}` + transcription.text;
+
+    await PineconeStore.fromTexts([transcription.text], {}, embeddings, {
+      pineconeIndex,
+      namespace: metadata.userId,
+    });
 
     await db.file.update({
       data: {
