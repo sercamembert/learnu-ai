@@ -6,6 +6,7 @@ import { z } from "zod";
 import { pc } from "@/lib/pinecone";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { PineconeStore } from "@langchain/pinecone";
+import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query";
 
 export const appRouter = router({
   authCallback: publicProcedure
@@ -51,6 +52,23 @@ export const appRouter = router({
       return { succes: true };
     }),
 
+  createNewChat: privateProcedure.mutation(async () => {
+    const { getUser } = getKindeServerSession();
+    const user = await getUser();
+
+    if (!user?.id || !user?.email) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+
+    const createdChat = await db.chat.create({
+      data: {
+        userId: user.id,
+      },
+    });
+
+    return { createdChatId: createdChat.id };
+  }),
+
   getFile: privateProcedure
     .input(z.object({ key: z.string() }))
     .mutation(async ({ ctx, input }) => {
@@ -66,6 +84,57 @@ export const appRouter = router({
       if (!file) throw new TRPCError({ code: "NOT_FOUND" });
 
       return file;
+    }),
+
+  getChatMessages: privateProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).nullish(),
+        cursor: z.string().nullish(),
+        chatId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { userId } = ctx;
+      const { chatId, cursor } = input;
+      const limit = input.limit ?? INFINITE_QUERY_LIMIT;
+
+      const chat = await db.chat.findFirst({
+        where: {
+          id: chatId,
+          userId,
+        },
+      });
+
+      if (!chat) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const messages = await db.message.findMany({
+        take: limit + 1,
+        where: {
+          chatId,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        cursor: cursor ? { id: cursor } : undefined,
+        select: {
+          id: true,
+          isUserMessage: true,
+          createdAt: true,
+          text: true,
+        },
+      });
+
+      let nextCursor: typeof cursor | undefined = undefined;
+      if (messages.length > limit) {
+        const nextItem = messages.pop();
+        nextCursor = nextItem?.id;
+      }
+
+      return {
+        messages,
+        nextCursor,
+      };
     }),
 });
 

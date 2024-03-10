@@ -119,13 +119,13 @@ const onVideoUploadComplete = async ({
     model: "whisper-1",
   });
 
-  console.log(transcription.text);
-
   const pineconeIndex = pc.Index("company");
 
   const embeddings = new OpenAIEmbeddings({
     openAIApiKey: process.env.OPENAI_API_KEY,
   });
+
+  const text = `tresc pliku o nazwie: ${file.name}` + transcription.text;
 
   await PineconeStore.fromTexts([transcription.text], {}, embeddings, {
     pineconeIndex,
@@ -179,7 +179,7 @@ export const ourFileRouter = {
     .middleware(middleware)
     .onUploadComplete(onPdfUploadComplete),
 
-  videoUploader: f({ video: { maxFileSize: "16MB" } })
+  videoUploader: f({ video: { maxFileSize: "32MB" } })
     .middleware(middleware)
     .onUploadComplete(onVideoUploadComplete),
 } satisfies FileRouter;

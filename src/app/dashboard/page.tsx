@@ -3,6 +3,7 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
 import UploadButton from "@/components/UploadButton";
+import CreateNewChat from "@/components/chat/CreateNewChat";
 
 const Page = async () => {
   const { getUser } = getKindeServerSession();
@@ -21,8 +22,11 @@ const Page = async () => {
   return (
     <div>
       <p>{user.email}</p>
-      <UploadButton type="pdfUploader" />
-      <UploadButton type="videoUploader" />
+      <div className="flex gap-3 pt-5">
+        <UploadButton type="pdfUploader" />
+        <UploadButton type="videoUploader" />
+        <CreateNewChat />
+      </div>
     </div>
   );
 };
