@@ -1,15 +1,12 @@
 import { db } from "@/db";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
-import { UploadThingError } from "uploadthing/server";
 import { PDFLoader } from "langchain/document_loaders/fs/pdf";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { PineconeStore } from "@langchain/pinecone";
 import { pc } from "@/lib/pinecone";
 import OpenAI, { toFile } from "openai";
-import fs from "fs";
-import { writeFile } from "fs/promises";
-import path from "path";
+import { createClient } from "@deepgram/sdk";
 
 const f = createUploadthing();
 
@@ -116,20 +113,36 @@ const onVideoUploadComplete = async ({
     },
   });
 
-  const response = await fetch(file.url);
-  if (!response.ok)
-    throw new Error(`Failed to fetch video: ${response.statusText}`);
-  const arrayBuffer = await response.arrayBuffer();
-  const videoBuffer = Buffer.from(arrayBuffer);
-  // const tempVideoPath = path.join(__dirname, "tempVideo.mp4");
+  const deepgram = createClient(process.env.DEEPGRAM_API_KEY || "");
+
+  const { result, error } = await deepgram.listen.prerecorded.transcribeUrl(
+    {
+      url: file.url,
+    },
+    {
+      model: "nova-2-general",
+      smart_format: true,
+      detect_language: true,
+    }
+  );
+
+  const transcriptionText =
+    result?.results.channels[0].alternatives[0].transcript;
+
+  // const response = await fetch(file.url);
+  // if (!response.ok)
+  //   throw new Error(`Failed to fetch video: ${response.statusText}`);
+  // const arrayBuffer = await response.arrayBuffer();
+  // const videoBuffer = Buffer.from(arrayBuffer);
+  // const tempVideoPath = path.join(process.cwd(), "tempVideo.mp4");
   // await fs.promises.writeFile(tempVideoPath, videoBuffer);
 
-  const transcription = await openai.audio.transcriptions.create({
-    file: await toFile(videoBuffer, file.name, { type: "audio/mp4" }),
-    model: "whisper-1",
-  });
+  // const transcription = await openai.audio.transcriptions.create({
+  //   file: await toFile(videoBuffer, file.name, { type: "audio/mp4" }),
+  //   model: "whisper-1",
+  // });
 
-  console.log(transcription.text);
+  // console.log(transcription.text);
 
   const pineconeIndex = pc.Index("company");
 
@@ -137,9 +150,9 @@ const onVideoUploadComplete = async ({
     openAIApiKey: process.env.OPENAI_API_KEY,
   });
 
-  const text = `tresc pliku o nazwie: ${file.name}` + transcription.text;
+  const text = `tresc pliku o nazwie: ${file.name}` + transcriptionText;
 
-  await PineconeStore.fromTexts([transcription.text], {}, embeddings, {
+  await PineconeStore.fromTexts([text], {}, embeddings, {
     pineconeIndex,
     namespace: metadata.userId,
   });
