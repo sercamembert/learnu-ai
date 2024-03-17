@@ -5,6 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Squash as Hamburger } from "hamburger-react";
 import { Menu, MenuItem } from "../ui/navbar-menu";
+import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
+import logoutIcon from "../../../public/icons/logout.png";
 
 const variants = {
   open: { x: 0 },
@@ -48,14 +50,20 @@ const SetUpNavbar = () => {
 
       <Menu setActive={setActive}>
         <MenuItem setActive={setActive} active={active} item="Logout">
-          <div className="flex flex-col space-y-4 ">
-            <Link
-              href=""
-              title="Usługi"
-              className="font-medium text-[7.82px] lg:text-[10px] xl:text-[12.81px] 2xl:text-[14.67px] desktop:text-[17.52px] "
+          <div className="flex items-center gap-[5px] md:gap-[6px] lg:gap-[8px] xl:gap-[9px] 2xl:gap-[11px] desktop:gap-[16px]">
+            <p
+              className="font-sf text-[#FF0000] opacity-70
+            text-[11px] md:text-[10px] lg:text-[12px] xl:text-[14px] 2xl:text-[17px] ultra:text-[25px] "
             >
               Logout
-            </Link>
+            </p>
+            <Image
+              src={logoutIcon}
+              width={16}
+              height={18}
+              alt="logout"
+              className="w-[11px] md:w-[5px] lg:w-[7px] xl:w-[8px] 2xl:w-[12px] desktop:w-[14px] ultra:w-[16px]"
+            />
           </div>
         </MenuItem>
       </Menu>

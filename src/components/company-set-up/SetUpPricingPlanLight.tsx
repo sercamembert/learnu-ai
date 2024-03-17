@@ -1,7 +1,11 @@
-import React from "react";
+"use client";
+import React, { useContext } from "react";
 import Image from "next/image";
 import circleImg from "../../../public/icons/plan-feature.png";
 import Link from "next/link";
+import { trpc } from "@/app/_trpc/client";
+import router from "next/router";
+import SetUpContext from "./SetUpContext";
 
 interface Props {
   price: string;
@@ -18,6 +22,12 @@ const SetUpPricingPlanLight = ({
   features,
   linkText,
 }: Props) => {
+  const { createUser } = useContext(SetUpContext);
+  const { mutate: createStripeSession } = trpc.createStripeSession.useMutation({
+    onSuccess: ({ url }) => {
+      window.location.href = url ?? "/dashboard/billing";
+    },
+  });
   return (
     <div
       className="bg-white flex flex-col items-center justify-between min-w-[270px] md:min-w-[26%] md:max-w-[26%]
@@ -68,8 +78,8 @@ const SetUpPricingPlanLight = ({
           ))}
         </div>
       </div>
-      <Link
-        href=""
+      <div
+        onClick={() => createStripeSession({ planName: name })}
         className="bg-primary text-white text-opacity-90 font-sf
         text-[14px] md:text-[8px] lg:text-[10px] xl:text-[13px] 2xl:text-[15px] desktop:text-[17px] ultra:text-[26px]
         h-[42px] md:h-[22px] lg:h-[30px] xl:h-[38px] 2xl:h-[42px] desktop:h-[50px] ultra:h-[76px]
@@ -77,7 +87,7 @@ const SetUpPricingPlanLight = ({
         w-[70%] flex items-center justify-center"
       >
         {linkText}
-      </Link>
+      </div>
     </div>
   );
 };

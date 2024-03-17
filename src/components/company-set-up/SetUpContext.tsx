@@ -1,4 +1,6 @@
 "use client";
+import { trpc } from "@/app/_trpc/client";
+import router from "next/router";
 import React, { ReactNode, createContext, useState } from "react";
 
 type SetUpContextType = {
@@ -12,6 +14,7 @@ type SetUpContextType = {
   handleDescriptionChange: (
     event: React.ChangeEvent<HTMLTextAreaElement>
   ) => void;
+  createUser: () => void;
 };
 
 export const SetUpContext = createContext<SetUpContextType>({
@@ -23,6 +26,7 @@ export const SetUpContext = createContext<SetUpContextType>({
   handleNameChange: () => {},
   handleIndustryChange: () => {},
   handleDescriptionChange: () => {},
+  createUser: () => {},
 });
 
 interface Props {
@@ -47,6 +51,19 @@ export const SetUpContextProvider = ({ children }: Props) => {
     setDescription(e.target.value);
   };
 
+  const mutation = trpc.authCallback.useMutation();
+
+  const createUser = () =>
+    mutation.mutate({
+      companyName: name,
+      companyDescription: description,
+      companyIndustry: industry,
+    });
+
+  if (mutation.error?.data?.code === "UNAUTHORIZED") {
+    router.push("/sign-in");
+  }
+
   return (
     <SetUpContext.Provider
       value={{
@@ -58,6 +75,7 @@ export const SetUpContextProvider = ({ children }: Props) => {
         handleNameChange,
         handleIndustryChange,
         handleDescriptionChange,
+        createUser,
       }}
     >
       {children}

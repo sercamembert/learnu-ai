@@ -21,16 +21,16 @@ const SetUpDescription = ({ onPrevButtonClick, onNextButtonClick }: Props) => {
   };
 
   const handleNextStep = () => {
-    if (description.trim().length > 0 && description.trim().length < 2000) {
+    if (description.trim().length > 0 && description.trim().length < 5000) {
       setActiveStep(activeStep + 1);
       onNextButtonClick();
     } else if (description.length < 1) {
       descriptionRef.current?.focus();
-    } else if (description.length > 2000) {
+    } else if (description.length > 5000) {
       descriptionRef.current?.focus();
       return toast({
         title: "Something went wrong",
-        description: "Company name can't be longer than 2000 characters",
+        description: "Company name can't be longer than 5000 characters",
         variant: "destructive",
       });
     }

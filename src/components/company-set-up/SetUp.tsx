@@ -6,6 +6,9 @@ import SetUpContext from "./SetUpContext";
 import StepCompanyName from "./StepCompanyName";
 import SetUpPricing from "./SetUpPricing";
 import useEmblaCarousel from "embla-carousel-react";
+import { Mutation } from "@tanstack/react-query";
+import { UseTRPCMutationResult } from "@trpc/react-query/shared";
+
 const SetUp = () => {
   const { activeStep, setActiveStep } = useContext(SetUpContext);
   const [emblaRef, emblaApi] = useEmblaCarousel({ watchDrag: false });

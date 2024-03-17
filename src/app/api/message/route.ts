@@ -73,6 +73,12 @@ export const POST = async (req: NextRequest) => {
     content: msg.text,
   }));
 
+  const dbUser = await db.user.findFirst({
+    where: {
+      id: user.id,
+    },
+  });
+
   const response = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
     temperature: 0,
@@ -88,6 +94,11 @@ export const POST = async (req: NextRequest) => {
         content: `
         
   \n----------------\n
+
+  USER COMPANY NAME: ${dbUser?.companyName}
+
+  USER COMPANY DESCRIPTION:
+  ${dbUser?.companyDescription}
   
   PREVIOUS CONVERSATION:
   ${formattedPrevMessages.map((message) => {

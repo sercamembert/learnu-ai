@@ -1,5 +1,4 @@
 import React from "react";
-
 import SetUpPricingPlanLight from "./SetUpPricingPlanLight";
 import SetUpPricingPlanDark from "./SetUpPricingPlanDark";
 import MobileScroll from "../MobileScroll";

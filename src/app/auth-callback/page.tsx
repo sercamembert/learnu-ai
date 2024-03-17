@@ -1,33 +1,25 @@
-"use client";
-import { useRouter, useSearchParams } from "next/navigation";
-import React, { Suspense, useContext, useState } from "react";
-import { trpc } from "../_trpc/client";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
+import React, { Suspense } from "react";
 import SetUpNavbar from "@/components/company-set-up/SetUpNavbar";
-import Image from "next/image";
-import StepCompanyName from "@/components/company-set-up/StepCompanyName";
-import SetUpStepper from "@/components/company-set-up/SetUpStepper";
-import SetUpDescription from "@/components/company-set-up/StepDescription";
-import SetUpContext, {
-  SetUpContextProvider,
-} from "@/components/company-set-up/SetUpContext";
+import { SetUpContextProvider } from "@/components/company-set-up/SetUpContext";
 import SetUp from "@/components/company-set-up/SetUp";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { db } from "@/db";
 
-const PageContent = () => {
-  const router = useRouter();
+const PageContent = async () => {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
 
-  const searchParams = useSearchParams();
-  const origin = searchParams.get("origin");
+  // check if user is in database
+  const dbUser = await db.user.findFirst({
+    where: {
+      id: user?.id,
+    },
+  });
 
-  const mutation = trpc.authCallback.useMutation();
-
-  if (mutation.error?.data?.code === "UNAUTHORIZED") {
-    router.push("/sign-in");
-  }
-
-  if (mutation.isSuccess) {
-    const { succes } = mutation.data;
-    router.push(origin ? `/${origin}` : "/dashboard");
-  }
+  // if (dbUser) {
+  //   redirect("/dashboard");
+  // }
 
   return (
     <>

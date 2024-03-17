@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import Hamburger from "hamburger-react";
-
+import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 const transition = {
   type: "spring",
   mass: 0.5,
@@ -41,18 +41,27 @@ export const MenuItem = ({
           transition={transition}
         >
           {active === item && (
-            <div className="absolute  left-1/2 transform -translate-x-1/2">
+            <div className="absolute left-1/2 transform -translate-x-1/2 cursor-pointer">
               <motion.div
                 transition={transition}
                 layoutId="active" // layoutId ensures smooth animation
-                className="bg-white dark:bg-black backdrop-blur-sm rounded-2xl overflow-hidden border border-black/[0.2] dark:border-white/[0.2] shadow-xl"
+                className="bg-white overflow-hidden rounded-[5px] md:rounded-md lg:rounded-lg 2xl:rounded-[10px] desktop:rounded-[15px]
+                
+                "
+                style={{ boxShadow: "0px 9.2px 23px rgba(54, 54, 54, 0.1)" }}
               >
-                <motion.div
-                  layout // layout ensures smooth animation
-                  className="w-max h-full p-4"
-                >
-                  {children}
-                </motion.div>
+                <LogoutLink>
+                  {" "}
+                  <motion.div
+                    layout // layout ensures smooth animation
+                    className="w-max h-full 
+                  px-[11px] lg:px-[15px] xl:px-[19px] 2xl:px-[21px] desktop:px-[25px] ultra:px-[38px] 
+                  py-[6px] lg:py-[7px] xl:py-[9px] 2xl:py-[10px] desktop:py-[12px] ultra:py-[18px]
+                  "
+                  >
+                    {children}
+                  </motion.div>
+                </LogoutLink>
               </motion.div>
             </div>
           )}
@@ -72,7 +81,7 @@ export const Menu = ({
   return (
     <nav
       onMouseLeave={() => setActive(null)} // resets the state
-      className="relative rounded-full boder border-transparent dark:bg-black dark:border-white/[0.2] bg-white shadow-input flex justify-center space-x-4 px-8 py-6 "
+      className="relative rounded-full boder border-transparent dark:bg-black dark:border-white/[0.2] bg-white shadow-input flex justify-center space-x-4  "
     >
       {children}
     </nav>
