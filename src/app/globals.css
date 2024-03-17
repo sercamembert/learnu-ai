@@ -1,76 +1,27 @@
+@import url("https://fonts.cdnfonts.com/css/sf-pro-display");
+@import url("https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Inter:wght@100..900&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 224 71.4% 4.1%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
- 
-    --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
- 
-    --primary: 220.9 39.3% 11%;
-    --primary-foreground: 210 20% 98%;
- 
-    --secondary: 220 14.3% 95.9%;
-    --secondary-foreground: 220.9 39.3% 11%;
- 
-    --muted: 220 14.3% 95.9%;
-    --muted-foreground: 220 8.9% 46.1%;
- 
-    --accent: 220 14.3% 95.9%;
-    --accent-foreground: 220.9 39.3% 11%;
- 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 20% 98%;
-
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 224 71.4% 4.1%;
- 
-    --radius: 0.5rem;
+  .padding {
+    @apply px-[20px] sm:px-[70px] md:px-[110px] lg:px-[145px] xl:px-[180px] 2xl:px-[210px] desktop:px-[245px] ultra:px-[370px];
   }
- 
-  .dark {
-    --background: 224 71.4% 4.1%;
-    --foreground: 210 20% 98%;
- 
-    --card: 224 71.4% 4.1%;
-    --card-foreground: 210 20% 98%;
- 
-    --popover: 224 71.4% 4.1%;
-    --popover-foreground: 210 20% 98%;
- 
-    --primary: 210 20% 98%;
-    --primary-foreground: 220.9 39.3% 11%;
- 
-    --secondary: 215 27.9% 16.9%;
-    --secondary-foreground: 210 20% 98%;
- 
-    --muted: 215 27.9% 16.9%;
-    --muted-foreground: 217.9 10.6% 64.9%;
- 
-    --accent: 215 27.9% 16.9%;
-    --accent-foreground: 210 20% 98%;
- 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 20% 98%;
- 
-    --border: 215 27.9% 16.9%;
-    --input: 215 27.9% 16.9%;
-    --ring: 216 12.2% 83.9%;
+
+  .step {
+    @apply bg-primary opacity-15 w-7 md:w-4 lg:w-5 xl:w-6 2xl:w-[26px] desktop:w-8 ultra:w-12 pt-1 md:pt-[3px] lg:pt-[4px] xl:pt-[5px] desktop:pt-[6px] ultra:pt-[9px]
+    rounded-sm desktop:rounded-md;
   }
 }
- 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+
+.embla {
+  overflow: hidden;
+}
+.embla__container {
+  display: flex;
+}
+.embla__slide {
+  flex: 0 0 100%;
+  min-width: 0;
 }

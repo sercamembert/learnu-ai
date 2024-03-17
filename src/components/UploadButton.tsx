@@ -158,7 +158,9 @@ const UploadButton = ({ type }: { type: string }) => {
       }}
     >
       <DialogTrigger onClick={() => setIsOpen(true)} asChild>
-        <Button>Upload {type === "videoUploader" ? "Video" : "PDF"}</Button>
+        <Button className="text-white">
+          Upload {type === "videoUploader" ? "Video" : "PDF"}
+        </Button>
       </DialogTrigger>
 
       <DialogContent>

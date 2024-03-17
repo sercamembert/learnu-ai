@@ -1,10 +1,18 @@
 "use client";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useContext, useState } from "react";
 import { trpc } from "../_trpc/client";
+import SetUpNavbar from "@/components/company-set-up/SetUpNavbar";
+import Image from "next/image";
+import StepCompanyName from "@/components/company-set-up/StepCompanyName";
+import SetUpStepper from "@/components/company-set-up/SetUpStepper";
+import SetUpDescription from "@/components/company-set-up/StepDescription";
+import SetUpContext, {
+  SetUpContextProvider,
+} from "@/components/company-set-up/SetUpContext";
+import SetUp from "@/components/company-set-up/SetUp";
 
 const PageContent = () => {
-  const [companyDescription, setCompanyDescription] = useState<string>("");
   const router = useRouter();
 
   const searchParams = useSearchParams();
@@ -21,19 +29,13 @@ const PageContent = () => {
     router.push(origin ? `/${origin}` : "/dashboard");
   }
 
-  const handlCreateUser = () => {
-    mutation.mutate({ companyDescription });
-  };
-
   return (
-    <div>
-      <input
-        type="text"
-        onChange={(e) => setCompanyDescription(e.target.value)}
-      />
-      <button onClick={handlCreateUser}>Create user</button>
-      {mutation.isPending ?? <div>Pending...</div>}
-    </div>
+    <>
+      <SetUpNavbar />
+      <SetUpContextProvider>
+        <SetUp />
+      </SetUpContextProvider>
+    </>
   );
 };
 

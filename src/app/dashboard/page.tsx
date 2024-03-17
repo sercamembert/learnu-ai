@@ -21,7 +21,6 @@ const Page = async () => {
 
   return (
     <div>
-      <p>{user.email}</p>
       <div className="flex gap-3 pt-5">
         <UploadButton type="pdfUploader" />
         <UploadButton type="videoUploader" />
