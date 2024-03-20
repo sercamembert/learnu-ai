@@ -63,27 +63,11 @@ export async function POST(request: Request) {
       session.subscription as string
     );
 
-    await db.user.update({
-      where: {
-        stripeSubscriptionId: subscription.id,
-      },
-      data: {
-        stripePriceId: subscription.items.data[0]?.price.id,
-        stripeCurrentPeriodEnd: new Date(
-          subscription.current_period_end * 1000
-        ),
-      },
-    });
-  }
-
-  if (event.type === "customer.subscription.updated") {
-    const subscription = await stripe.subscriptions.retrieve(
-      session.subscription as string
-    );
     const plan = PLANS.find(
       (plan) =>
         plan.price.priceIds.test === subscription.items.data[0]?.price.id
     );
+
     await db.user.update({
       where: {
         stripeSubscriptionId: subscription.id,
