@@ -35,12 +35,9 @@ export async function getUserSubscriptionPlan() {
 
   const planType = dbUser.subscriptionPlan;
 
-  const plan =
-    planType === "BASIC"
-      ? PLANS[0]
-      : planType === "PREMIUM"
-      ? PLANS[1]
-      : PLANS[2];
+  const plan = isSubscribed
+    ? PLANS.find((plan) => plan.price.priceIds.test === dbUser.stripePriceId)
+    : null;
 
   let isCanceled = false;
   if (isSubscribed && dbUser.stripeSubscriptionId) {
