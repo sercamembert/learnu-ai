@@ -73,16 +73,11 @@ export async function POST(request: Request) {
         stripeSubscriptionId: subscription.id,
       },
       data: {
-        stripePriceId: subscription.items.data[0]?.price.id,
+        stripePriceId: subscription.items.data[1]?.price.id,
         stripeCurrentPeriodEnd: new Date(
           subscription.current_period_end * 1000
         ),
-        subscriptionPlan:
-          plan?.name === "Basic"
-            ? "BASIC"
-            : plan?.name === "Premium"
-            ? "PREMIUM"
-            : "PROFESSIONAL",
+        subscriptionPlan: "BASIC",
       },
     });
   }
