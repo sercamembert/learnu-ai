@@ -21,7 +21,7 @@ const SetUpPricingPlanDark = ({
   return (
     <div
       className="bg-primary relative text-white flex flex-col items-center justify-between min-w-[270px] md:min-w-[26%] 
-  min-h-[436px] md:min-h-[238px] lg:min-h-[318px] xl:min-h-[298px] 2xl:min-h-[447px] desktop:min-h-[534px] ultra:min-h-[798px]
+  min-h-[436px] md:min-h-[238px] lg:min-h-[318px] xl:min-h-[400px] 2xl:min-h-[447px] desktop:min-h-[534px] ultra:min-h-[798px]
   py-[33px] md:py-0 md:pt-[33px] lg:pt-[44px] xl:pt-[55px] 2xl:pt-[62px] desktop:pt-[74px] ultra:pt-[110px]
   md:pb-[10px] lg:pb-[13px] xl:pb-[16px] 2xl:pb-[19px] desktop:pb-[22px] ultra:pb-[33px]
   rounded-[21px] md:rounded-xl lg:rounded-2xl xl:rounded-[20px] 2xl:rounded-[23px] desktop:rounded-[27px] ultra:rounded-[40px]"
