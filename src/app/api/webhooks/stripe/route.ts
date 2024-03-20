@@ -55,9 +55,7 @@ export async function POST(request: Request) {
         ),
       },
     });
-  }
-
-  if (event.type === "invoice.payment_succeeded") {
+  } else if (event.type === "invoice.payment_succeeded") {
     // Retrieve the subscription details from Stripe.
     const subscription = await stripe.subscriptions.retrieve(
       session.subscription as string
@@ -74,9 +72,7 @@ export async function POST(request: Request) {
         ),
       },
     });
-  }
-
-  if (event.type === "customer.subscription.updated") {
+  } else if (event.type === "customer.subscription.updated") {
     const subscription = await stripe.subscriptions.retrieve(
       session.subscription as string
     );
