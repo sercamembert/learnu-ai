@@ -112,6 +112,7 @@ export const appRouter = router({
         ],
         metadata: {
           userId: userId,
+          planName,
         },
       });
 

@@ -40,6 +40,12 @@ export async function POST(request: Request) {
         id: session.metadata.userId,
       },
       data: {
+        subscriptionPlan:
+          session.metadata.planName === "Basic"
+            ? "BASIC"
+            : session.metadata.planName === "Premium"
+            ? "PREMIUM"
+            : "PROFESSIONAL",
         stripeSubscriptionId: subscription.id,
         stripeCustomerId: subscription.customer as string,
         stripePriceId: subscription.items.data[0]?.price.id,
