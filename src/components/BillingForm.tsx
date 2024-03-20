@@ -6,9 +6,10 @@ import { getUserSubscriptionPlan } from "@/lib/stripe";
 
 interface BillingFormProps {
   subscriptionPlan: Awaited<ReturnType<typeof getUserSubscriptionPlan>>;
+  userId: string | undefined;
 }
 
-const BillingForm = ({ subscriptionPlan }: BillingFormProps) => {
+const BillingForm = ({ subscriptionPlan, userId }: BillingFormProps) => {
   const { toast } = useToast();
 
   const { mutate: createStripeSession } = trpc.createStripeSession.useMutation({
@@ -23,7 +24,18 @@ const BillingForm = ({ subscriptionPlan }: BillingFormProps) => {
       }
     },
   });
-  return <div>{subscriptionPlan?.name}</div>;
+  return (
+    <div>
+      <p>{subscriptionPlan?.name}</p>
+      <div
+        onClick={() => {
+          createStripeSession({ planName: "" });
+        }}
+      >
+        Manage subscription
+      </div>
+    </div>
+  );
 };
 
 export default BillingForm;

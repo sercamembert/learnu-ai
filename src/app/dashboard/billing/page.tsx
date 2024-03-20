@@ -8,7 +8,7 @@ const Page = async () => {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
 
-  return <BillingForm subscriptionPlan={subscriptionPlan} />;
+  return <BillingForm subscriptionPlan={subscriptionPlan} userId={user?.id} />;
 };
 
 export default Page;

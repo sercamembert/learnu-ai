@@ -27,13 +27,10 @@ export async function getUserSubscriptionPlan() {
   }
 
   const isSubscribed = Boolean(
-    dbUser.subscriptionPlan &&
-      dbUser.stripePriceId &&
+    dbUser.stripePriceId &&
       dbUser.stripeCurrentPeriodEnd && // 86400000 = 1 day
       dbUser.stripeCurrentPeriodEnd.getTime() + 86_400_000 > Date.now()
   );
-
-  const planType = dbUser.subscriptionPlan;
 
   const plan = isSubscribed
     ? PLANS.find((plan) => plan.price.priceIds.test === dbUser.stripePriceId)

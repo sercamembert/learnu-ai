@@ -27,7 +27,7 @@ export async function POST(request: Request) {
 
   if (!session?.metadata?.userId) {
     return new Response(null, {
-      status: 200,
+      status: 300,
     });
   }
 
@@ -41,12 +41,6 @@ export async function POST(request: Request) {
         id: session.metadata.userId,
       },
       data: {
-        subscriptionPlan:
-          session.metadata.planName === "Basic"
-            ? "BASIC"
-            : session.metadata.planName === "Premium"
-            ? "PREMIUM"
-            : "PROFESSIONAL",
         stripeSubscriptionId: subscription.id,
         stripeCustomerId: subscription.customer as string,
         stripePriceId: subscription.items.data[0]?.price.id,
@@ -56,37 +50,32 @@ export async function POST(request: Request) {
       },
     });
   } else if (event.type === "invoice.payment_succeeded") {
-    // Retrieve the subscription details from Stripe.
-    const subscription = await stripe.subscriptions.retrieve(
-      session.subscription as string
-    );
+    const invoice = event.data.object as Stripe.Invoice;
 
-    await db.user.update({
-      where: {
-        stripeSubscriptionId: "sub_1OwJvdJBUfH6y9FSRbbdGBmo",
-      },
-      data: {
-        stripePriceId: "price_1OvMH4JBUfH6y9FSLMzBx1lS",
-        stripeCurrentPeriodEnd: new Date(
-          subscription.current_period_end * 1000
-        ),
-      },
-    });
-  } else if (event.type === "customer.subscription.updated") {
-    const subscription = await stripe.subscriptions.retrieve(
-      session.subscription as string
-    );
-    const updatedSubscription = await stripe.subscriptions.update(
-      subscription.id
-    );
+    // Retrieve the subscription details from Stripe.
+    const subscriptionId = invoice.subscription as string;
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
 
     await db.user.update({
       where: {
         stripeSubscriptionId: subscription.id,
       },
       data: {
-        stripePriceId: "price_1OvMH4JBUfH6y9FSLMzBx1lS",
-        subscriptionPlan: "PROFESSIONAL",
+        stripePriceId: subscription.items.data[0]?.price.id,
+        stripeCurrentPeriodEnd: new Date(
+          subscription.current_period_end * 1000
+        ),
+      },
+    });
+  } else if (event.type === "customer.subscription.updated") {
+    const subscription = event.data.object;
+    console.log(subscription);
+    await db.user.update({
+      where: {
+        stripeSubscriptionId: subscription.id,
+      },
+      data: {
+        stripePriceId: subscription.items.data[0]?.price.id,
       },
     });
   }
