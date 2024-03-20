@@ -68,7 +68,6 @@ export async function POST(request: Request) {
         stripeSubscriptionId: subscription.id,
       },
       data: {
-        stripePriceId: subscription.items.data[0]?.price.id,
         stripeCurrentPeriodEnd: new Date(
           subscription.current_period_end * 1000
         ),
@@ -86,21 +85,11 @@ export async function POST(request: Request) {
 
     await db.user.update({
       where: {
-        stripeSubscriptionId: updatedSubscription.id,
+        stripeSubscriptionId: subscription.id,
       },
       data: {
         stripePriceId: updatedSubscription.items.data[0]?.price.id,
-        stripeCurrentPeriodEnd: new Date(
-          updatedSubscription.current_period_end * 1000
-        ),
-        subscriptionPlan:
-          updatedSubscription.items.data[0]?.price.id ===
-          "price_1OvMH4JBUfH6y9FSLMzBx1lS"
-            ? "BASIC"
-            : updatedSubscription.items.data[0]?.price.id ===
-              "price_1OvMJWJBUfH6y9FSBiiSkmpA"
-            ? "PREMIUM"
-            : "PROFESSIONAL",
+        subscriptionPlan: "PROFESSIONAL",
       },
     });
   }
