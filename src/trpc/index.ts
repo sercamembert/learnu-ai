@@ -74,7 +74,7 @@ export const appRouter = router({
       const { userId } = ctx;
       const { planName } = input;
 
-      const billingUrl = absoluteUrl("/dashboard/billing");
+      const billingUrl = absoluteUrl("/dashboard/");
 
       if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
 
