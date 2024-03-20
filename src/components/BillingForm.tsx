@@ -23,7 +23,7 @@ const BillingForm = ({ subscriptionPlan }: BillingFormProps) => {
       }
     },
   });
-  return <div>{subscriptionPlan.name}</div>;
+  return <div>{subscriptionPlan?.name}</div>;
 };
 
 export default BillingForm;

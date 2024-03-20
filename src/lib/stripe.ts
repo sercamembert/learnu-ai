@@ -13,11 +13,7 @@ export async function getUserSubscriptionPlan() {
   const user = await getUser();
 
   if (!user?.id) {
-    return {
-      isSubscribed: false,
-      isCanceled: false,
-      stripeCurrentPeriodEnd: null,
-    };
+    return null;
   }
 
   const dbUser = await db.user.findFirst({
@@ -27,11 +23,7 @@ export async function getUserSubscriptionPlan() {
   });
 
   if (!dbUser) {
-    return {
-      isSubscribed: false,
-      isCanceled: false,
-      stripeCurrentPeriodEnd: null,
-    };
+    return null;
   }
 
   const isSubscribed = Boolean(
@@ -41,9 +33,14 @@ export async function getUserSubscriptionPlan() {
       dbUser.stripeCurrentPeriodEnd.getTime() + 86_400_000 > Date.now()
   );
 
-  const plan = isSubscribed
-    ? PLANS.find((plan) => plan.price.priceIds.test === dbUser.stripePriceId)
-    : null;
+  const planType = dbUser.subscriptionPlan;
+
+  const plan =
+    planType === "BASIC"
+      ? PLANS[0]
+      : planType === "PREMIUM"
+      ? PLANS[1]
+      : PLANS[2];
 
   let isCanceled = false;
   if (isSubscribed && dbUser.stripeSubscriptionId) {
