@@ -89,7 +89,7 @@ const SetUpPricingPlanLight = ({
         text-[14px] md:text-[8px] lg:text-[10px] xl:text-[13px] 2xl:text-[15px] desktop:text-[17px] ultra:text-[26px]
         h-[42px] md:h-[22px] lg:h-[30px] xl:h-[38px] 2xl:h-[42px] desktop:h-[50px] ultra:h-[76px]
         rounded-[11px] md:rounded-[6px] lg:rounded-lg xl:rounded-[10px] 2xl:rounded-[11px] desktop:rounded-[14px] ultra:rounded-[20px]
-        w-[70%] flex items-center justify-center"
+        w-[70%] flex items-center justify-center cursor-pointer"
       >
         {linkText}
       </div>

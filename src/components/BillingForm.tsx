@@ -27,6 +27,7 @@ const BillingForm = ({ subscriptionPlan, userId }: BillingFormProps) => {
   return (
     <div>
       <p>{subscriptionPlan?.name}</p>
+      <p>{subscriptionPlan?.isCanceled && "Canceled"}</p>
       <div
         onClick={() => {
           createStripeSession({ planName: "" });
