@@ -25,3 +25,45 @@
   flex: 0 0 100%;
   min-width: 0;
 }
+
+.long-title {
+  position: relative;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.long-title::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px; /* Długość cienia */
+  height: 100%;
+  background: linear-gradient(
+    to left,
+    #fff,
+    rgba(255, 255, 255, 0)
+  ); /* Biały cień */
+}
+
+.my-custom-scrollbar::-webkit-scrollbar {
+  width: 12px; /* Szerokość paska przewijania */
+}
+
+.my-custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Kolor tła ścieżki paska przewijania */
+}
+
+.my-custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #888; /* Kolor 'kciuka' paska przewijania */
+}
+
+.my-custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #363636; /* Kolor 'kciuka' po najechaniu kursorem */
+}
+
+/* Dla przeglądarki Firefox */
+.my-custom-scrollbar {
+  scrollbar-width: thin; /* Możliwe wartości: 'auto', 'thin', 'none' */
+  scrollbar-color: #888 #f1f1f1; /* Kolor 'kciuka' i ścieżki */
+}

@@ -25,6 +25,7 @@ const page = async ({ params }: PageProps) => {
     },
   });
   if (!chat) notFound();
+
   return <ChatWrapper chatId={chatId} />;
 };
 

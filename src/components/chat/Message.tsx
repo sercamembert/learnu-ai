@@ -1,9 +1,8 @@
 import { cn } from "@/lib/utils";
 import { ExtendedMessage } from "@/types/message";
-import { Icons } from "../Icons";
 import ReactMarkdown from "react-markdown";
-import { format } from "date-fns";
 import { forwardRef } from "react";
+import Image from "next/image";
 
 interface MessageProps {
   message: ExtendedMessage;
@@ -13,66 +12,44 @@ interface MessageProps {
 const Message = forwardRef<HTMLDivElement, MessageProps>(
   ({ message, isNextMessageSamePerson }, ref) => {
     return (
-      <div
-        ref={ref}
-        className={cn("flex items-end", {
-          "justify-end": message.isUserMessage,
-        })}
-      >
+      <div ref={ref} className={cn("flex")}>
+        <Image
+          src={
+            message.isUserMessage ? "/icons/userIcon.svg" : "/icons/botIcon.svg"
+          }
+          alt="Message Icon"
+          width={74}
+          height={74}
+          className="aspect-square w-[35px] lg:w-[30px] xl:w-[37px] 2xl:w-[42px] desktop:w-[50px] ultra:w-[75px] h-[35px] lg:h-[30px] xl:h-[37px] 2xl:h-[42px] desktop:h-[50px] ultra:h-[75px] "
+        />
+
         <div
           className={cn(
-            "relative flex h-6 w-6 aspect-square items-center justify-center",
+            "flex flex-col mx-2 2xl:max-w-[66%] text-base ultra:text-[25px]",
             {
-              "order-2 bg-blue-600 rounded-sm": message.isUserMessage,
-              "order-1 bg-zinc-800 rounded-sm": !message.isUserMessage,
-              invisible: isNextMessageSamePerson,
+              "order-1 items-end": message.isUserMessage,
+              "order-2 items-start": !message.isUserMessage,
             }
           )}
         >
-          {message.isUserMessage ? (
-            <Icons.user className="fill-zinc-200 text-zinc-200 h-3/4 w-3/4" />
-          ) : (
-            <Icons.logo className="fill-zinc-300 h-3/4 w-3/4" />
-          )}
-        </div>
-
-        <div
-          className={cn("flex flex-col space-y-2 text-base max-w-md mx-2", {
-            "order-1 items-end": message.isUserMessage,
-            "order-2 items-start": !message.isUserMessage,
-          })}
-        >
           <div
-            className={cn("px-4 py-2 rounded-lg inline-block", {
-              "bg-blue-600 text-white": message.isUserMessage,
-              "bg-gray-200 text-gray-900": !message.isUserMessage,
+            className={cn("px-4 rounded-lg inline-block text-primary", {
               "rounded-br-none":
                 !isNextMessageSamePerson && message.isUserMessage,
               "rounded-bl-none":
                 !isNextMessageSamePerson && !message.isUserMessage,
             })}
           >
+            <p className="leading-tight font-semibold font-primary">
+              {message.isUserMessage ? "You" : "LearnU AI"}
+            </p>
             {typeof message.text === "string" ? (
-              <ReactMarkdown
-                className={cn("prose", {
-                  "text-zinc-50": message.isUserMessage,
-                })}
-              >
+              <ReactMarkdown className="prose text-primary">
                 {message.text}
               </ReactMarkdown>
             ) : (
               message.text
             )}
-            {message.id !== "loading-message" ? (
-              <div
-                className={cn("text-xs select-none mt-2 w-full text-right", {
-                  "text-zinc-500": !message.isUserMessage,
-                  "text-blue-300": message.isUserMessage,
-                })}
-              >
-                {format(new Date(message.createdAt), "HH:mm")}
-              </div>
-            ) : null}
           </div>
         </div>
       </div>

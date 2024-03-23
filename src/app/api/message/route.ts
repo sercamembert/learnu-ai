@@ -40,6 +40,16 @@ export const POST = async (req: NextRequest) => {
     },
   });
 
+  const firstMessage = await db.message.findFirst({
+    where: { chatId },
+    orderBy: { createdAt: "asc" },
+  });
+
+  if (firstMessage) {
+    const title = firstMessage.text.split(" ").slice(0, 3).join(" ");
+    await db.chat.update({ where: { id: chatId }, data: { title } });
+  }
+
   const embeddings = new OpenAIEmbeddings({
     openAIApiKey: process.env.OPENAI_API_KEY,
   });
@@ -83,6 +93,7 @@ export const POST = async (req: NextRequest) => {
     model: "gpt-3.5-turbo",
     temperature: 0,
     stream: true,
+    max_tokens: 400,
     messages: [
       {
         role: "assistant",

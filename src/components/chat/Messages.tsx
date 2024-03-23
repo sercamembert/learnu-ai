@@ -7,6 +7,9 @@ import { ChatContext } from "./ChatContext";
 import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query";
 import { useIntersection } from "@mantine/hooks";
 import Skeleton from "react-loading-skeleton";
+import Image from "next/image";
+import newChatImg from "../../../public/icons/newChat.svg";
+
 interface MessagesProps {
   chatId: string;
 }
@@ -33,7 +36,7 @@ const Messages = ({ chatId }: MessagesProps) => {
     id: "loading-message",
     isUserMessage: false,
     text: (
-      <span className="flex h-full items-center justify-center">
+      <span className="flex h-full items-center">
         <Loader2 className="h-4 w-4 animate-spin" />
       </span>
     ),
@@ -58,7 +61,13 @@ const Messages = ({ chatId }: MessagesProps) => {
   }, [entry, fetchNextPage]);
 
   return (
-    <div className="flex max-h-[calc(100vh-3.5rem-7rem)] border-zinc-200 flex-1 flex-col-reverse gap-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
+    <div
+      className="flex max-h-screen flex-1 flex-col-reverse px-5 md:px-9 lg:px-0 overflow-y-auto
+      pb-[85px] lg:pb-[100px] xl:pb-[130px] 2xl:pb-[140px] desktop:pb-[160px]
+      pt-[82px] lg:pt-[62px] xl:pt-[78px] 2xl:pt-[88px] desktop:pt-[105px] ultra:pt-[156px]
+    gap-[29px] md:gap-[22px] lg:gap-[28px] xl:gap-[36px] 2xl:gap-[40px] desktop:gap-[48px] ultra:gap-[71px]
+    "
+    >
       {combinedMessages && combinedMessages.length > 0 ? (
         combinedMessages.map((message, i) => {
           const isNextMessageSamePerson =
@@ -91,12 +100,12 @@ const Messages = ({ chatId }: MessagesProps) => {
           <Skeleton className="h-16" />
         </div>
       ) : (
-        <div className="flex-1 flex flex-col items-center justify-center gap-2">
-          <MessageSquare className="h-8 w-8 text-blue-500" />
-          <h3 className="font-semibold text-xl">You&apos;re all set!</h3>
-          <p className="text-zinc-500 text-sm">
-            Ask your first question to get started.
-          </p>
+        <div className="flex-1 flex  ">
+          <Image
+            src={newChatImg}
+            alt="LearnU premium"
+            className="w-full md:w-1/2 lg:w-full lg:max-w-[300px] xl:max-w-[370px] 2xl:max-w-[410px] desktop:max-w-[490px] ultra:max-w-[745px] mx-auto"
+          />
         </div>
       )}
     </div>

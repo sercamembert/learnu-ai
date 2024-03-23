@@ -12,6 +12,7 @@ const config: Config = {
     extend: {
       colors: {
         primary: "#363636",
+        input: "#F1F1F1",
       },
       fontFamily: {
         sf: ["SF Pro Display", "sans-serif"],

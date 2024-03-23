@@ -203,6 +203,57 @@ export const appRouter = router({
         nextCursor,
       };
     }),
+
+  infiniteChats: privateProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).nullish(),
+        cursor: z.string().nullish(), // <-- "cursor" needs to exist, but can be any type
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const limit = input.limit ?? 5;
+      const { userId } = ctx;
+      const { cursor } = input;
+
+      const chats = await db.chat.findMany({
+        where: {
+          userId: userId,
+          AND: [
+            {
+              title: {
+                not: null,
+              },
+            },
+            {
+              title: {
+                not: "",
+              },
+            },
+          ],
+        },
+        take: limit + 1,
+        orderBy: {
+          createdAt: "asc",
+        },
+        cursor: cursor ? { id: cursor } : undefined,
+        select: {
+          title: true,
+          id: true,
+          createdAt: true,
+        },
+      });
+
+      let nextCursor: typeof cursor | undefined = undefined;
+      if (chats.length > limit) {
+        const nextItem = chats.pop();
+        nextCursor = nextItem?.id;
+      }
+      return {
+        chats,
+        nextCursor,
+      };
+    }),
 });
 
 export type AppRouter = typeof appRouter;
