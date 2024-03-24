@@ -38,7 +38,7 @@ const ChatInput = ({ chatId }: Props) => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 w-full">
+    <div className="fixed lg:absolute bottom-0 left-0 w-full">
       <div
         className="mx-5 md:mx-9 flex flex-row gap-3 lg:mx-auto bg-white
       pb-[10px] md:pb-[15px] lg:pb-[28px] xl:pb-[35px] 2xl:pb-[40px] desktop:pb-[47px] ultra:pb-[71px]
