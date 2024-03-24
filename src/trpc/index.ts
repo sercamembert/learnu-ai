@@ -234,7 +234,7 @@ export const appRouter = router({
         },
         take: limit + 1,
         orderBy: {
-          createdAt: "asc",
+          createdAt: "desc",
         },
         cursor: cursor ? { id: cursor } : undefined,
         select: {
@@ -253,6 +253,22 @@ export const appRouter = router({
         chats,
         nextCursor,
       };
+    }),
+
+  deleteChat: privateProcedure
+    .input(z.object({ chatId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { chatId } = input;
+      const { userId } = ctx;
+
+      await db.chat.delete({
+        where: {
+          userId,
+          id: chatId,
+        },
+      });
+
+      return { succes: true };
     }),
 });
 

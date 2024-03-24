@@ -17,9 +17,9 @@ const PageContent = async () => {
     },
   });
 
-  // if (dbUser) {
-  //   redirect("/dashboard");
-  // }
+  if (dbUser) {
+    redirect("/dashboard");
+  }
 
   return (
     <>

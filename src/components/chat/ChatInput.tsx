@@ -7,11 +7,35 @@ import { ChatContext } from "./ChatContext";
 import Image from "next/image";
 import SendIcon from "../../../public/icons/send.svg";
 import UploadIcon from "../../../public/icons/upload.svg";
+import { trpc } from "@/app/_trpc/client";
+import { useRouter } from "next/navigation";
 
-const ChatInput = () => {
+interface Props {
+  chatId: string;
+}
+
+const ChatInput = ({ chatId }: Props) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { addMessage, handleInputChange, isLoading, message } =
     useContext(ChatContext);
+
+  const router = useRouter();
+  const mutation = trpc.createNewChat.useMutation();
+
+  if (mutation.error?.data?.code === "UNAUTHORIZED") {
+    router.push("/sign-in");
+  }
+
+  if (mutation.isSuccess) {
+    const { createdChatId } = mutation.data;
+    router.push(`/dashboard/${createdChatId}?activeWindow=dashboard`);
+  }
+
+  const handlCreateChat = () => {
+    if (chatId === "") {
+      mutation.mutate();
+    }
+  };
 
   return (
     <div className="absolute bottom-0 left-0 w-full">
@@ -26,7 +50,8 @@ const ChatInput = () => {
               rows={1}
               ref={textareaRef}
               maxRows={4}
-              autoFocus
+              autoFocus={chatId !== "" ? true : false}
+              onClick={handlCreateChat}
               onChange={handleInputChange}
               value={message}
               onKeyDown={(e) => {
@@ -54,7 +79,12 @@ const ChatInput = () => {
               className="absolute bottom-[13px] right-[42px] bg-input lg:hidden "
               aria-label="send message"
               onClick={() => {
-                addMessage();
+                if (chatId === "") {
+                  mutation.mutate();
+                } else {
+                  addMessage();
+                }
+
                 textareaRef.current?.focus();
               }}
             >
@@ -71,7 +101,12 @@ const ChatInput = () => {
               right-[13px] xl:right-[16px] 2xl:right-[18px] desktop:right-[21px] ultra:right-[31px] bg-input"
               aria-label="send message"
               onClick={() => {
-                addMessage();
+                if (chatId === "") {
+                  mutation.mutate();
+                } else {
+                  addMessage();
+                }
+
                 textareaRef.current?.focus();
               }}
             >

@@ -195,7 +195,11 @@ export const ChatContextProvider = ({ chatId, children }: Props) => {
     setMessage(e.target.value);
   };
 
-  const addMessage = () => sendMessage({ message });
+  const addMessage = () => {
+    if (chatId !== "") {
+      sendMessage({ message });
+    }
+  };
 
   return (
     <ChatContext.Provider

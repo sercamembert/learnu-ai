@@ -8,11 +8,14 @@ import ChatHistory from "./ChatHistory";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { trpc } from "@/app/_trpc/client";
+import DashboardPanel from "../DashboardPanel";
 interface Props {
   chatId: string;
+  companyName: string | null;
+  username: string;
 }
 
-const ChatWrapper = ({ chatId }: Props) => {
+const ChatWrapper = ({ chatId, companyName, username }: Props) => {
   const router = useRouter();
   const mutation = trpc.createNewChat.useMutation();
 
@@ -22,7 +25,7 @@ const ChatWrapper = ({ chatId }: Props) => {
 
   if (mutation.isSuccess) {
     const { createdChatId } = mutation.data;
-    router.push(`/dashboard/${createdChatId}`);
+    router.push(`/dashboard/${createdChatId}?activeWindow=dashboard`);
   }
 
   const handlCreateChat = () => {
@@ -32,7 +35,17 @@ const ChatWrapper = ({ chatId }: Props) => {
     <ChatContextProvider chatId={chatId}>
       <div className="flex md:gap-[25px] lg:gap-[33px] xl:gap-[41px] 2xl:gap-[47px] desktop:gap-[56px] ultra:gap-[83px]">
         <div className="bg-white lg:min-w-[360px] xl:min-w-[450px] 2xl:min-w-[507px] desktop:min-w-[605px] ultra:min-w-[901px] hidden lg:flex ">
-          <div className="w-1/2">w</div>
+          <div
+            className="w-1/2 h-screen
+            px-[19px] xl:px-6 2xl:px-7 desktop:px-8 ultra:px-12
+            py-6 xl:py-[30px] 2xl:py-[34px] desktop:py-[40px] ultra:py-[60px]"
+          >
+            <DashboardPanel
+              companyName={companyName}
+              username={username}
+              lastChatId={null}
+            />
+          </div>
           <div
             className="w-1/2 rounded-r-[26px] lg:rounded-r-[34px] xl:rounded-r-[44px] 2xl:rounded-r-[49px] desktop:rounded-r-[58px] ultra:rounded-r-[87px]
             px-[19px] xl:px-6 2xl:px-7 desktop:px-8 ultra:px-12
@@ -40,7 +53,7 @@ const ChatWrapper = ({ chatId }: Props) => {
             h-screen
             "
             style={{
-              boxShadow: "20px 2.84444px 30px rgba(0, 0, 0, 0.05);",
+              boxShadow: "20px 2.84444px 30px rgba(0, 0, 0, 0.05)",
             }}
           >
             <Image
@@ -59,17 +72,17 @@ const ChatWrapper = ({ chatId }: Props) => {
             >
               New Chat
             </button>
-            <ChatHistory />
+            <ChatHistory chatId={chatId} />
           </div>
         </div>
 
         <div className="mx-auto relative w-full h-screen bg-white flex-col justify-between gap-2">
-          <ChatDrawer />
+          <ChatDrawer chatId={chatId} />
           <div className="flex-1 justify-between flex flex-col mb-28">
             <Messages chatId={chatId} />
           </div>
 
-          <ChatInput />
+          <ChatInput chatId={chatId} />
         </div>
       </div>
     </ChatContextProvider>

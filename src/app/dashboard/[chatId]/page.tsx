@@ -26,7 +26,24 @@ const page = async ({ params }: PageProps) => {
   });
   if (!chat) notFound();
 
-  return <ChatWrapper chatId={chatId} />;
+  const userResult = await db.user.findFirst({
+    where: {
+      id: user.id,
+    },
+    select: {
+      companyName: true,
+    },
+  });
+
+  const companyName = userResult ? userResult.companyName : "";
+
+  return (
+    <ChatWrapper
+      chatId={chatId}
+      companyName={companyName || "Company"}
+      username={user.given_name + " " + user.family_name}
+    />
+  );
 };
 
 export default page;

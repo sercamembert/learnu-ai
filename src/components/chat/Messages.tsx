@@ -104,6 +104,18 @@ const Messages = ({ chatId }: MessagesProps) => {
           <Image
             src={newChatImg}
             alt="LearnU premium"
+            className={`${
+              chatId === "" && "hidden"
+            } w-full md:w-1/2 lg:w-full lg:max-w-[300px] xl:max-w-[370px] 2xl:max-w-[410px] desktop:max-w-[490px] ultra:max-w-[745px] mx-auto`}
+          />
+        </div>
+      )}
+
+      {chatId === "" && (
+        <div className="hidden flex-1 lg:flex  ">
+          <Image
+            src={newChatImg}
+            alt="LearnU premium"
             className="w-full md:w-1/2 lg:w-full lg:max-w-[300px] xl:max-w-[370px] 2xl:max-w-[410px] desktop:max-w-[490px] ultra:max-w-[745px] mx-auto"
           />
         </div>

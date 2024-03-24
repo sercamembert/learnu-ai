@@ -13,7 +13,7 @@ const CreateNewChat = () => {
 
   if (mutation.isSuccess) {
     const { createdChatId } = mutation.data;
-    router.push(`/dashboard/${createdChatId}`);
+    router.push(`/dashboard/${createdChatId}?activeWindow=dashboard`);
   }
 
   const handlCreateChat = () => {

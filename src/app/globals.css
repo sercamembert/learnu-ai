@@ -26,6 +26,26 @@
   min-width: 0;
 }
 
+.long-title-active {
+  position: relative;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.long-title-active::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%; /* Długość cienia */
+  height: 100%;
+  background: linear-gradient(
+    to left,
+    #f1f1f1,
+    rgba(255, 255, 255, 0)
+  ); /* Biały cień */
+}
+
 .long-title {
   position: relative;
   max-width: 100%;
@@ -37,21 +57,23 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: 100px; /* Długość cienia */
+  width: 100%; /* Długość cienia */
   height: 100%;
   background: linear-gradient(
     to left,
-    #fff,
+    white,
     rgba(255, 255, 255, 0)
   ); /* Biały cień */
 }
 
 .my-custom-scrollbar::-webkit-scrollbar {
   width: 12px; /* Szerokość paska przewijania */
+  position: absolute;
 }
 
 .my-custom-scrollbar::-webkit-scrollbar-track {
   background: #f1f1f1; /* Kolor tła ścieżki paska przewijania */
+  position: absolute;
 }
 
 .my-custom-scrollbar::-webkit-scrollbar-thumb {
@@ -66,4 +88,17 @@
 .my-custom-scrollbar {
   scrollbar-width: thin; /* Możliwe wartości: 'auto', 'thin', 'none' */
   scrollbar-color: #888 #f1f1f1; /* Kolor 'kciuka' i ścieżki */
+}
+
+.link-container:hover .bin-icon {
+  display: block; /* lub 'flex', w zależności od układu */
+  opacity: 1; /* Pełna widoczność */
+}
+
+/* Styl dla ikony śmietnika, domyślnie ukrytej */
+.bin-icon {
+  display: block; /* Zmienione na block, aby umożliwić transition */
+  opacity: 0; /* Początkowo niewidoczna */
+  transition: opacity 0.3s ease; /* Dodano przejście dla opacity */
+  pointer-events: none; /* Zapobiega interakcji, gdy ikona jest niewidoczna */
 }

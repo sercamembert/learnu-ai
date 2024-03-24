@@ -4,7 +4,11 @@ import React, { useEffect, useRef } from "react";
 import LastChat from "./LastChat";
 import { Loader2 } from "lucide-react";
 
-const ChatHistory = () => {
+interface Props {
+  chatId: string;
+}
+
+const ChatHistory = ({ chatId }: Props) => {
   const { data, isLoading, fetchNextPage, isFetching } =
     trpc.infiniteChats.useInfiniteQuery(
       {
@@ -33,14 +37,27 @@ const ChatHistory = () => {
     <div
       className="lg:max-h-[80%] mt-[46px] lg:mt-[22px] xl:mt-[27px] 2xl:mt-[31px] desktop:mt-[37px] ultra:mt-[55px] pb-[30px] 
     overflow-y-auto lg:overflow-y-hidden lg:hover:overflow-y-scroll duration-300 my-custom-scrollbar 
-    flex flex-col gap-11 lg:gap-5 xl:gap-7 2xl:gap-[30px] desktop:gap-9 ultra:gap-[53px]"
+    flex flex-col gap-11 lg:gap-5 xl:gap-7 2xl:gap-[30px] desktop:gap-9 ultra:gap-[53px] overflow-x-hidden min-w-full"
     >
       {chats?.map((chat, i) => {
         if (i === chats.length - 1) {
-          return <LastChat id={chat.id} key={chat.id} title={chat.title} />;
+          return (
+            <LastChat
+              id={chat.id}
+              key={chat.id}
+              title={chat.title}
+              isActive={chatId === chat.id && true}
+            />
+          );
         } else
           return (
-            <LastChat id={chat.id} key={chat.id} ref={ref} title={chat.title} />
+            <LastChat
+              id={chat.id}
+              key={chat.id}
+              ref={ref}
+              title={chat.title}
+              isActive={chatId === chat.id && true}
+            />
           );
       })}
       {isLoading ||
