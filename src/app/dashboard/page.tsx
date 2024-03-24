@@ -44,7 +44,7 @@ const Page = async () => {
           lastChatId={lastUserChat[0].id}
         />
       </div>
-      <div className="invisible lg:visible">
+      <div className="hidden lg:block">
         <ChatWrapper
           chatId={""}
           companyName={dbUser.companyName}

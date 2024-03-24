@@ -33,7 +33,7 @@ const ChatWrapper = ({ chatId, companyName, username }: Props) => {
   };
   return (
     <ChatContextProvider chatId={chatId}>
-      <div className="flex md:gap-[25px] lg:gap-[33px] xl:gap-[41px] 2xl:gap-[47px] desktop:gap-[56px] ultra:gap-[83px]">
+      <div className="flex md:gap-[25px] lg:gap-[33px] xl:gap-[41px] 2xl:gap-[47px] desktop:gap-[56px] ultra:gap-[83px] h-screen">
         <div className="bg-white lg:min-w-[360px] xl:min-w-[450px] 2xl:min-w-[507px] desktop:min-w-[605px] ultra:min-w-[901px] hidden lg:flex ">
           <div
             className="w-1/2 h-screen
